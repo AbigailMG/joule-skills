@@ -1,0 +1,54 @@
+{
+  "description": "Configuration for the Weekly Customer Effort Tracker skill. Edit this file to customise customer inference, email filtering, and effort estimation.",
+
+  "internal_domains": [
+    "sap.com",
+    "sapglobalservices.com"
+  ],
+
+  "excluded_meeting_keywords": [
+    "Lunch",
+    "Focus time",
+    "OOO",
+    "Out of Office",
+    "Break",
+    "Personal",
+    "Team standup",
+    "All Hands",
+    "Town Hall",
+    "1:1",
+    "Coffee"
+  ],
+
+  "customer_aliases": {
+    "comment": "Map name variations to a single canonical customer name. Key = variant, Value = canonical name.",
+    "examples": {
+      "AcmeCorp": "Acme Corp",
+      "Acme Corporation": "Acme Corp"
+    }
+  },
+
+  "known_customers": [
+    {
+      "comment": "Add your active customers here. The tracker uses these to improve inference from meeting titles and email domains.",
+      "name": "Example Customer A",
+      "domains": ["examplecustomer-a.com"],
+      "keywords": ["ExCustA", "Customer A"]
+    }
+  ],
+
+  "effort_estimation": {
+    "comment": "Controls prep time added to calendar meetings.",
+    "short_meeting_threshold_mins": 30,
+    "short_meeting_prep_mins": 5,
+    "long_meeting_prep_mins": 10,
+    "desktop_file_hours": 0.5
+  },
+
+  "report": {
+    "comment": "Controls report output behaviour.",
+    "filename_prefix": "effort",
+    "save_to_documents": true,
+    "zero_hours_display": "—"
+  }
+}
