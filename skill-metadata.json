@@ -1,0 +1,112 @@
+{
+  "name": "weekly-customer-effort-tracker",
+  "version": "1.2.0",
+  "author": "Abi / Joule Skill Creator",
+  "description": "Scans Outlook calendar meetings and work blocks, sent and received emails, and desktop files (Desktop and Documents folders, up to 2 levels deep) for the current working week to estimate hours spent per customer.",
+  "tags": ["productivity", "time-tracking", "customer", "weekly-report", "outlook"],
+  "allowed_tools": [
+    "list_calendar_events",
+    "list_emails",
+    "search_emails",
+    "get_email",
+    "write_file",
+    "execute",
+    "read_file"
+  ],
+  "activation_triggers": [
+    "Run my weekly effort tracker",
+    "How much time did I spend on customers this week",
+    "How much time did I spend on customers last week",
+    "Generate my weekly effort report",
+    "Track my customer hours",
+    "Run the effort tracker"
+  ],
+  "data_sources": [
+    {
+      "id": "calendar",
+      "type": "outlook_calendar",
+      "tool": "list_calendar_events",
+      "limit": 50,
+      "scope": "reporting week (Mon-Fri)"
+    },
+    {
+      "id": "sent_emails",
+      "type": "outlook_mail",
+      "tool": "list_emails",
+      "folder": "sentitems",
+      "limit": 50
+    },
+    {
+      "id": "received_emails",
+      "type": "outlook_mail",
+      "tool": "list_emails",
+      "folder": "inbox",
+      "limit": 50
+    },
+    {
+      "id": "files",
+      "type": "filesystem",
+      "tool": "execute",
+      "folders": ["Desktop", "Documents"],
+      "max_depth": 2
+    }
+  ],
+  "effort_estimation": {
+    "meetings": {
+      "method": "duration_plus_prep",
+      "prep_short_min": 5,
+      "prep_long_min": 10,
+      "prep_threshold_min": 30
+    },
+    "work_blocks": {
+      "method": "full_duration",
+      "detection_keywords": [
+        "prep", "draft", "deliverable", "review", "proposal",
+        "document", "write", "analysis", "scope", "prepare",
+        "estimate", "design", "build", "workshop prep", "slides"
+      ]
+    },
+    "sent_emails": {
+      "method": "word_count",
+      "attachment_flat_hours": 1.0,
+      "word_count_formula": "max(5, min(45, words / 8)) / 60",
+      "attachment_keywords": [
+        "attached", "attachment", "please find", "see attached",
+        "enclosed", "http", "https", "www", "click here"
+      ]
+    },
+    "received_emails": {
+      "method": "word_count",
+      "word_count_formula": "max(5, min(45, words / 8)) / 60",
+      "skip_internal": true
+    },
+    "files": {
+      "method": "flat_rate",
+      "hours_per_file": 0.5
+    }
+  },
+  "output": {
+    "format": "markdown",
+    "filename_pattern": "effort-YYYY-MM-DD.md",
+    "destination": "Documents (working directory)",
+    "sections": ["summary_table", "activity_detail"]
+  },
+  "changelog": [
+    {
+      "version": "1.2.0",
+      "changes": [
+        "File scanning now covers Desktop and Documents folders (up to 2 levels deep) instead of specific Desktop/Customer and Desktop/CEP subfolders",
+        "Calendar step now detects and counts solo work blocks (dedicated time booked to work on customer deliverables) in addition to meetings",
+        "Work block hours counted at full duration (no prep time added)",
+        "Activity Detail report section now includes a Work blocks line per customer",
+        "File customer inference now uses subfolder path as well as filename"
+      ]
+    },
+    {
+      "version": "1.1.0",
+      "changes": [
+        "Initial release with calendar, email, and desktop file scanning"
+      ]
+    }
+  ]
+}
